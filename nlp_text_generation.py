@@ -1,8 +1,9 @@
 #@title **RDP**
 #@markdown  It takes 4-5 minutes for installation
-
 import os
 import subprocess
+
+os.system("pip install --upgrade")
 
 username = "user" #@param {type:"string"}
 password = "root" #@param {type:"string"}
