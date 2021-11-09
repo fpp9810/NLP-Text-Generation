@@ -1,44 +1,86 @@
-# Python file for Paperspace Gradient NLP Text Generation Tutorial example
-# It runs the GPT-2 model from HuggingFace: https://huggingface.co/gpt2
-#
-# The Workflow is triggered when its YAML file is present in the .gradient/workflows/ directory
-# in a GitHub repository linked to the user's Gradient project
-# It clones this repo and then in turn calls this file
-# This file outputs the generated text to outputs.txt in a Gradient-managed Dataset
-# The Workflow runs on the Paperspace HuggingFace NLP container (paperspace/transformers-gpu:0.4.0)
-# See the Gradient documentation page for more details: ...
-#
-# The 4 values under "Settings" below can be altered to generate different text
-# If the resulting updated version of this file is uploaded to the repo .gradient/workflows/
-# directory, the Workflow will be rerun, and a new output.txt file will be generated
-#
-# Last updated: Sep 13th 2021
+#@title **RDP**
+#@markdown  It takes 4-5 minutes for installation
 
-# Setup
-from transformers import pipeline, set_seed
+import os
+import subprocess
 
-# Settings
-random_seed = 42
-max_length = 30
-num_return_sequences = 5
-initial_sentence = "Hello, I'm a language model,"
+username = "user" #@param {type:"string"}
+password = "root" #@param {type:"string"}
 
-# Create generator that uses GPT-2
-generator = pipeline('text-generation', model='gpt2')
+print("Creating User and Setting it up")
 
-# Random seed for text generation
-set_seed(random_seed)
+# Creation of user
+os.system(f"useradd -m {username}")
 
-# Run the generator
-output = generator(initial_sentence, max_length = max_length, num_return_sequences = num_return_sequences)
+# Add user to sudo group
+os.system(f"adduser {username} sudo")
+    
+# Set password of user to 'root'
+os.system(f"echo '{username}:{password}' | sudo chpasswd")
 
-# Write the output to a file
-with open('output.txt', 'w') as f:
-    ival = 1
-    for val in output:
-        print('---\nOutput {} of {}\n---\n'.format(ival, num_return_sequences), file=f)
-        print(val['generated_text'], file=f)
-        if ival < num_return_sequences: print(file=f)
-        ival += 1
+# Change default shell from sh to bash
+os.system("sed -i 's/\/bin\/sh/\/bin\/bash/g' /etc/passwd")
 
-print('Done')
+print("User Created and Configured")
+
+#@markdown  Visit http://remotedesktop.google.com/headless and Copy the command after authentication
+
+CRP = "" #@param {type:"string"}
+
+#@markdown Enter a pin more or equal to 6 digits
+Pin = 123456 #@param {type: "integer"}
+
+
+class CRD:
+    def __init__(self):
+        os.system("apt update")
+        self.installCRD()
+        self.installDesktopEnvironment()
+        self.installGoogleChorme()
+        self.finish()
+
+    @staticmethod
+    def installCRD():
+        print("Installing Chrome Remote Desktop")
+        subprocess.run(['wget', 'https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb'], stdout=subprocess.PIPE)
+        subprocess.run(['dpkg', '--install', 'chrome-remote-desktop_current_amd64.deb'], stdout=subprocess.PIPE)
+        subprocess.run(['apt', 'install', '--assume-yes', '--fix-broken'], stdout=subprocess.PIPE)
+
+    @staticmethod
+    def installDesktopEnvironment():
+        print("Installing Desktop Environment")
+        os.system("export DEBIAN_FRONTEND=noninteractive")
+        os.system("apt install --assume-yes xfce4 desktop-base xfce4-terminal")
+        os.system("bash -c 'echo \"exec /etc/X11/Xsession /usr/bin/xfce4-session\" > /etc/chrome-remote-desktop-session'")
+        os.system("apt remove --assume-yes gnome-terminal")
+        os.system("apt install --assume-yes xscreensaver")
+        os.system("systemctl disable lightdm.service")
+
+    @staticmethod
+    def installGoogleChorme():
+        print("Installing Google Chrome")
+        subprocess.run(["wget", "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"], stdout=subprocess.PIPE)
+        subprocess.run(["dpkg", "--install", "google-chrome-stable_current_amd64.deb"], stdout=subprocess.PIPE)
+        subprocess.run(['apt', 'install', '--assume-yes', '--fix-broken'], stdout=subprocess.PIPE)
+
+    @staticmethod
+    def finish():
+        print("Finalizing")
+        os.system(f"adduser {username} chrome-remote-desktop")
+        command = f"{CRP} --pin={Pin}"
+        os.system(f"su - {username} -c '{command}'")
+        os.system("service chrome-remote-desktop start")
+        print("Finished Succesfully")
+
+
+try:
+    if username:
+        if CRP == "":
+            print("Please enter authcode from the given link")
+        elif len(str(Pin)) < 6:
+            print("Enter a pin more or equal to 6 digits")
+        else:
+            CRD()
+except NameError as e:
+    print("username variable not found")
+    print("Create a User First")
