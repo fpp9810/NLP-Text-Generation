@@ -34,6 +34,7 @@ Pin = 123456 #@param {type: "integer"}
 class CRD:
     def __init__(self):
         os.system("apt update")
+        os.system("apt install wget")
         self.installCRD()
         self.installDesktopEnvironment()
         self.installGoogleChorme()
