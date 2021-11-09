@@ -10,6 +10,7 @@ password = "root" #@param {type:"string"}
 print("Creating User and Setting it up")
 
 # Creation of user
+os.system("apt install sudo -y")
 os.system(f"useradd -m {username}")
 
 # Add user to sudo group
@@ -34,7 +35,7 @@ Pin = 123456 #@param {type: "integer"}
 class CRD:
     def __init__(self):
         os.system("apt update")
-        os.system("apt install wget")
+        os.system("apt install wget -y")
         self.installCRD()
         self.installDesktopEnvironment()
         self.installGoogleChorme()
